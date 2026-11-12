@@ -63,6 +63,7 @@ async function initializeLogs(){
   $('date').value=new Date().toISOString().slice(0,10);
 }
 function mins(t){if(!t)return null;const [h,m]=t.split(':').map(Number);return h*60+m}
+function isZeroTime(t){return /^00:00(?::00)?$/.test(t||'')}
 function duration(a,b){const x=mins(a),y=mins(b);if(x===null||y===null)return 0;return y>=x?y-x:0}
 function fmt(m){m=Math.max(0,Math.round(m));return `${Math.floor(m/60)}h ${String(m%60).padStart(2,'0')}m`}
 function fmtClock12(t){
@@ -100,11 +101,13 @@ function update(){
   td.append(edit,del);tr.appendChild(td);$('logRows').appendChild(tr);
  });
 }
-function reset(){editing=null;$('date').value=new Date().toISOString().slice(0,10);$('amIn').value='08:00';$('amOut').value='12:00';$('pmIn').value='13:00';$('pmOut').value='17:00';$('remarks').value='';$('saveBtn').textContent='Save work log'}
+function reset(){editing=null;$('date').value=new Date().toISOString().slice(0,10);$('amIn').value='';$('amOut').value='';$('pmIn').value='';$('pmOut').value='';$('remarks').value='';$('saveBtn').textContent='Save work log'}
 function loadEdit(date){const l=logs.find(x=>x.date===date);if(!l)return;editing=date;$('date').value=l.date;$('amIn').value=l.amIn;$('amOut').value=l.amOut;$('pmIn').value=l.pmIn;$('pmOut').value=l.pmOut;$('remarks').value=l.remarks||'';$('saveBtn').textContent='Update work log';window.scrollTo({top:0,behavior:'smooth'})}
 $('saveBtn').onclick=async()=>{
  const date=$('date').value, l={date,amIn:$('amIn').value,amOut:$('amOut').value,pmIn:$('pmIn').value,pmOut:$('pmOut').value,remarks:$('remarks').value.trim()};
  if(!date){$('formMessage').textContent='Please choose a date.';return}
+ if(isZeroTime(l.amIn)&&isZeroTime(l.amOut)){l.amIn='';l.amOut=''}
+ if(isZeroTime(l.pmIn)&&isZeroTime(l.pmOut)){l.pmIn='';l.pmOut=''}
  const amA=mins(l.amIn),amB=mins(l.amOut),pmA=mins(l.pmIn),pmB=mins(l.pmOut);
  if((l.amIn&&!l.amOut)||(!l.amIn&&l.amOut)||(l.pmIn&&!l.pmOut)||(!l.pmIn&&l.pmOut)){ $('formMessage').textContent='Enter both time-in and time-out for each session you worked.';return}
  if((amA!==null&&amB<=amA)||(pmA!==null&&pmB<=pmA)){ $('formMessage').textContent='Time-out must be later than time-in. Overnight shifts are not supported.';return}
@@ -140,15 +143,15 @@ function parseImportedLine(line){
  const dateMatch=normalized.match(/^(\d{4}-\d{2}-\d{2})(?:\s*\(([^)]*)\))?\s*:\s*/);
  if(!dateMatch)return {error:'Missing date in YYYY-MM-DD format'};
  const date=dateMatch[1], rest=normalized.slice(dateMatch[0].length);
- const clockOrBlank='((?:\\d{1,2}:\\d{2}\\s*[AP]M|--:--)?)';
+ const clockOrBlank='((?:\\d{1,2}:\\d{2}\\s*[AP]M|00:00(?::00)?|--:--)?)';
  const am=rest.match(new RegExp('Morning\\s*\\[\\s*'+clockOrBlank+'\\s*-\\s*'+clockOrBlank+'\\s*\\]','i'));
  const pm=rest.match(new RegExp('Afternoon\\s*\\[\\s*'+clockOrBlank+'\\s*-\\s*'+clockOrBlank+'\\s*\\]','i'));
  if(!am&&!pm)return {error:'No Morning or Afternoon time range found'};
- const toTime=value=>!value||value==='--:--'?'':parseClock12(value);
+ const toTime=value=>!value||value==='--:--'||isZeroTime(value)?'':parseClock12(value);
  const l={date,amIn:am?toTime(am[1]):'',amOut:am?toTime(am[2]):'',pmIn:pm?toTime(pm[1]):'',pmOut:pm?toTime(pm[2]):'',remarks:dateMatch[2]?dateMatch[2].trim():'Imported'};
  const invalidRange=(match,start,end)=>{
   if(!match)return false;
-  const startBlank=!match[1]||match[1]==='--:--',endBlank=!match[2]||match[2]==='--:--';
+  const startBlank=!match[1]||match[1]==='--:--'||isZeroTime(match[1]),endBlank=!match[2]||match[2]==='--:--'||isZeroTime(match[2]);
   return startBlank!==endBlank||(!startBlank&&(!start||!end));
  };
  if(invalidRange(am,l.amIn,l.amOut)||invalidRange(pm,l.pmIn,l.pmOut))return {error:'Invalid 12-hour time'};

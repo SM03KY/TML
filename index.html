@@ -19,14 +19,14 @@
  <h2>Daily work log</h2>
  <div class="formgrid">
   <div class="field"><label for="date">Date</label><input type="date" id="date"></div>
-  <div class="field"><label for="amIn">Morning time in</label><input type="time" id="amIn" value="08:00"></div>
-  <div class="field"><label for="amOut">Morning time out</label><input type="time" id="amOut" value="12:00"></div>
-  <div class="field"><label for="pmIn">Afternoon time in</label><input type="time" id="pmIn" value="13:00"></div>
-  <div class="field"><label for="pmOut">Afternoon time out</label><input type="time" id="pmOut" value="17:00"></div>
+  <div class="field"><label for="amIn">Morning time in</label><input type="time" id="amIn"></div>
+  <div class="field"><label for="amOut">Morning time out</label><input type="time" id="amOut"></div>
+  <div class="field"><label for="pmIn">Afternoon time in</label><input type="time" id="pmIn"></div>
+  <div class="field"><label for="pmOut">Afternoon time out</label><input type="time" id="pmOut"></div>
   <div class="field"><label for="remarks">Remarks (optional)</label><input type="text" id="remarks" placeholder="e.g. Holiday, excuse leave"></div>
  </div>
  <div class="actions"><button id="saveBtn">Save work log</button><button class="secondary" id="clearBtn">Clear inputs</button></div>
- <p class="note">Daily total is calculated from the two work sessions. Lunch/break time between morning and afternoon is not counted.</p>
+ <p class="note">Daily total is calculated from the two work sessions. Leave both time fields blank (shown as --:--), or set both to 00:00, for a session you did not work. Enter a complete time-in/time-out pair for each session you worked. Lunch/break time between morning and afternoon is not counted.</p>
  <p class="note" id="formMessage" role="status"></p>
 </section>
 <section class="panel">
@@ -46,7 +46,7 @@
   <textarea id="importText" rows="5" style="width:100%;padding:11px;border:1px solid #cfd7e4;border-radius:9px;font:14px/1.5 system-ui" placeholder="2026-08-26: Morning [7:30 AM - 12:01 PM], Afternoon [12:59 PM - 6:30 PM] = 10h 2m (10.03 hrs)"></textarea>
  </div>
  <div class="actions"><button id="importBtn">Import logs</button><button class="secondary" id="sampleBtn">Load sample</button></div>
- <p class="note">Paste one log per line; hyphen bullets are supported. Use [--:-- - --:--] or [ - ] for a session with no time. A full-day leave/excuse with both sessions blank is also saved; add a note after the date, e.g. YYYY-MM-DD (Excuse leave):, to record the reason. You can paste multiple lines. Totals after the equals sign are references only; time is recalculated from the entries.</p>
+ <p class="note">Paste one log per line; hyphen bullets are supported. Use [--:-- - --:--], [00:00:00 - 00:00:00], or [ - ] for a session with no time. A full-day leave/excuse with both sessions blank is also saved; add a note after the date, e.g. YYYY-MM-DD (Excuse leave):, to record the reason. You can paste multiple lines. Totals after the equals sign are references only; time is recalculated from the entries.</p>
  <p class="note" id="importMessage" role="status"></p>
 </section>
 <section class="panel">
