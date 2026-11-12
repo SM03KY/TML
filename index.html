@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WorkLog — OJT Time Tracker</title>
+<link rel="stylesheet" href="worklog_system.css">
+</head>
+<body>
+<header><div class="wrap"><h1>WorkLog</h1><p>Morning and afternoon time-in/time-out calculator</p></div></header>
+<main>
+<section class="grid">
+ <div class="stat"><small>Total completed</small><strong id="total">0h 00m</strong></div>
+ <div class="stat"><small>Required hours</small><strong id="requiredDisplay">486h</strong></div>
+ <div class="stat"><small>Remaining</small><strong id="remaining">486h</strong></div>
+ <div class="stat"><small>Work days logged</small><strong id="days">0</strong></div>
+</section>
+<section class="panel">
+ <h2>Daily work log</h2>
+ <div class="formgrid">
+  <div class="field"><label for="date">Date</label><input type="date" id="date"></div>
+  <div class="field"><label for="amIn">Morning time in</label><input type="time" id="amIn" value="08:00"></div>
+  <div class="field"><label for="amOut">Morning time out</label><input type="time" id="amOut" value="12:00"></div>
+  <div class="field"><label for="pmIn">Afternoon time in</label><input type="time" id="pmIn" value="13:00"></div>
+  <div class="field"><label for="pmOut">Afternoon time out</label><input type="time" id="pmOut" value="17:00"></div>
+  <div class="field"><label for="remarks">Remarks (optional)</label><input type="text" id="remarks" placeholder="e.g. Holiday, excuse leave"></div>
+ </div>
+ <div class="actions"><button id="saveBtn">Save work log</button><button class="secondary" id="clearBtn">Clear inputs</button></div>
+ <p class="note">Daily total is calculated from the two work sessions. Lunch/break time between morning and afternoon is not counted.</p>
+ <p class="note" id="formMessage" role="status"></p>
+</section>
+<section class="panel">
+ <h2>Progress settings</h2>
+ <div class="settings">
+  <div class="field"><label for="required">Required hours</label><input type="number" id="required" min="1" value="486"></div>
+  <div class="field"><label for="dailyTarget">Daily target (hours)</label><input type="number" id="dailyTarget" min="0.25" step="0.25" value="7"></div>
+  <button class="secondary" id="applySettings">Apply settings</button>
+ </div>
+ <div class="progress"><span id="progressBar"></span></div>
+ <p class="note" id="progressText">0% completed</p>
+</section>
+<section class="panel">
+ <h2>Import existing work logs</h2>
+ <div class="field">
+  <label for="importText">Paste your logs (one entry per line)</label>
+  <textarea id="importText" rows="5" style="width:100%;padding:11px;border:1px solid #cfd7e4;border-radius:9px;font:14px/1.5 system-ui" placeholder="2026-08-26: Morning [7:30 AM - 12:01 PM], Afternoon [12:59 PM - 6:30 PM] = 10h 2m (10.03 hrs)"></textarea>
+ </div>
+ <div class="actions"><button id="importBtn">Import logs</button><button class="secondary" id="sampleBtn">Load sample</button></div>
+ <p class="note">Paste one log per line; hyphen bullets are supported. Use [--:-- - --:--] or [ - ] for a session with no time. A full-day leave/excuse with both sessions blank is also saved; add a note after the date, e.g. YYYY-MM-DD (Excuse leave):, to record the reason. You can paste multiple lines. Totals after the equals sign are references only; time is recalculated from the entries.</p>
+ <p class="note" id="importMessage" role="status"></p>
+</section>
+<section class="panel">
+ <h2>Saved work logs</h2>
+ <div class="actions" style="margin-top:0;margin-bottom:12px"><button class="secondary" id="exportBtn">Export CSV</button><button class="danger" id="clearAllBtn">Delete all logs</button></div>
+ <div class="tablewrap"><table><thead><tr><th>Date</th><th>Morning</th><th>Afternoon</th><th>Total</th><th>Remarks</th><th>Actions</th></tr></thead><tbody id="logRows"></tbody></table></div>
+ <div id="empty" class="empty">No work logs saved yet. Add your first day above.</div>
+ <p class="note">Your entries are saved in a browser database automatically, so you do not need to import/export after each session.</p>
+</section>
+</main>
+<script src="worklog_system.js" defer></script>
+</body></html>
